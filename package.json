@@ -1,0 +1,26 @@
+{
+  "name": "note-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Michael Nishiguchi",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^5.13.0",
+    "bcrypt": "^4.0.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "dotenv": "^8.2.0",
+    "ejs": "^3.0.1",
+    "ejs-lint": "^1.0.1",
+    "express": "^4.17.1",
+    "express-session": "^1.17.0",
+    "password-hash": "^1.2.2",
+    "pg": "^7.18.2",
+    "pug": "^2.0.4"
+  }
+}
