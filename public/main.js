@@ -33,3 +33,19 @@ function about() {
 		}
 	});
 }
+
+function register() {
+	var pass = $('#password').val();
+	var passCopy = $('#passwordCopy').val();
+
+	if (pass != passCopy) {
+		alert('Passwords do not match');
+	}
+	else {
+		$.post('/register');
+	}
+}
+
+function deleteNote() {
+	$.post('/deleteNote');
+}
