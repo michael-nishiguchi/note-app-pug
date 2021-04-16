@@ -1,0 +1,14 @@
+doctype html
+html(lang='en')
+  include ../partials/head.pug
+  body
+    include ../partials/myNav.pug
+    .container
+      form(action="/edit" class="notes" method="post")
+          input(type="hidden" name="note_id" value=note_id)
+          input(class="form-control form-control-lg input-lg" name="title" class="noteTitle" type="text" value=title)
+          .small(class="font-italic") Last modified #{curr_date}
+          textarea(class="form-control" type="text" name="content" rows="5" value=content)= content
+
+          input.btn.btn-block(type="submit" value="Save")
+          input.btn.btn-danger.btn-block(type="submit" formaction="/deletenote" value="Delete")

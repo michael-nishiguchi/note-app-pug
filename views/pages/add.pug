@@ -6,5 +6,5 @@ html(lang='en')
     .container
       form(action="/newNote" class="notes" method="post")
           input(class="form-control form-control-lg input-lg" name="title" class="noteTitle" type="text" placeholder="title")
-          textarea(class="form-control" type="text" name="content" rows="5" placeholder="Your note...")
-          button.btn.btn-block(type='submit' class="blueBtn") Save
+          textarea(class="form-control" id="notepad" type="text" name="content" rows="5" placeholder="Your note...")
+          input.btn.btn-block(type='submit' value="Save")

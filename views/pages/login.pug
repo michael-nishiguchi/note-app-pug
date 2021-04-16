@@ -1,0 +1,21 @@
+doctype html
+html
+  include ../partials/head.pug
+  body.loginBody
+    .wrapper.fadeInDown
+      .full Nishi-
+        span.yellow Notes
+      .logo
+        img(src="note-logo.svg")
+      #formContent
+        // Login Form
+        form(action="/login" method="post")
+          .error=alert
+          br
+          h1.fadeIn.first Login
+          input#email.fadeIn.second(type="text" name="email" placeholder="email" autofocus="autofocus" required="")
+          input#password.fadeIn.third(type="password" name="password" placeholder="password" required="")
+          input.fadeIn.fourth(type="submit" value="Log In")
+          input.fadeIn.fourth(type="submit" value="Forgot password?" formaction="forgotPass")
+          br
+          input.registerBtn.fadeIn.fifth(type="button" onclick="viewRegister()" value="Register")

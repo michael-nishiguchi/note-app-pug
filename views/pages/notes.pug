@@ -3,20 +3,17 @@ html(lang='en')
   include ../partials/head.pug
   body
     include ../partials/myNav.pug
-    .container
-      if (success == true) 
-        h4(class="alert") *Note updated
-      h1 Welcome to notes
+    .container.all-notes
       each note in notes
-        form(action="/edit" class="notes" method="post")
-          input(type="hidden" name="note_id" value=note.note_id)
-          input(class="form-control form-control-lg input-lg" name="title" class="noteTitle" type="text" value=note.title)
-          .small(class="font-italic") Last modified #{note.date_created}
-          textarea(class="form-control" type="text" name="content" rows="5" value=note.content)= note.content
+          form(action="/edit" method="post" class="note-item")
+            .note-content
+              input(type="hidden" name="note_id" value=note.note_id)
+              input(name="title" class="note-item-title" value=note.title readonly)
+              i=note.date_created
+              textarea(class=" note-item-content" type="text" name="content" rows="5" value=note.content readonly)= note.content
+            input.btn(type="submit" formaction="/editView" value="Edit")
+            input.btn.btn-danger(type="submit" formaction="/deletenote" value="Delete")
 
-          button.btn.blueBtn.noteBtn(type="submit") Save
-          button.btn.btn-danger.noteBtn(type="submit" formaction="deletenote") Delete
-          
           // Button trigger modal
           //button.btn.btn-danger.noteBtn(type='button' data-toggle='modal' data-target='#exampleModal')
             | Delete

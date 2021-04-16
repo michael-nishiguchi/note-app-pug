@@ -10,6 +10,10 @@ function logout() {
 	});
 }
 
+function viewRegister() {
+	window.location.href="/viewRegister";
+}
+
 function add() {
 	$.get('/add', function() {
 		if (result && result.success) {
@@ -49,3 +53,11 @@ function register() {
 function deleteNote() {
 	$.post('/deleteNote');
 }
+
+$(document).ready(function() {
+
+
+});
+
+
+

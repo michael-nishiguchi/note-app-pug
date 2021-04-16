@@ -9,6 +9,8 @@ const path = require('path');
 //const port = 3000;
 const bcrypt = require('bcryptjs');
 
+console.log(__dirname);
+
 var cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
@@ -21,7 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.set('view engine', 'pug');
 
-app.set('port', process.env.PORT || 5000);
+app.set('port', process.env.PORT || 4000);
 app.listen(app.get('port'), function() {
 	console.log('Node server is running on port ' + app.get('port'));
 });
@@ -33,9 +35,8 @@ app.post('/login', (req, res) => {
 	ssn = req.session;
 
 	var email = req.body.email;
-	var password = req.body.password;
+	let password = req.body.password;
 	let hash = bcrypt.hashSync(password, 10);
-	console.log('Hash: ' + hash);
 
 	var sql = 'SELECT * FROM user_account WHERE email = $1 LIMIT 1';
 	pool.query(sql, [ email ], function(err, result) {
@@ -43,6 +44,17 @@ app.post('/login', (req, res) => {
 			console.error('Error running query', err);
 		}
 		else {
+			//logging
+			for(var i = 0; i < result.rows.length; i++) {
+				console.log("=================" + result.rows[i]);
+			}
+
+			//end logging
+			if(result.rows[0] == 'undefined' || result.rows[0] == null) {
+				res.render('pages/login', {
+					alert: 'Login failed. Please try again or register a new account.'
+				});
+			}
 			bcrypt.compare(password, result.rows[0].password, function(err, same) {
 				if (err) {
 					console.error('Error comparing passwords', err);
@@ -55,7 +67,9 @@ app.post('/login', (req, res) => {
 						result = getNotes(id, res);
 					}
 					else {
-						res.send({ success: false });
+						res.render('pages/login', {
+							alert: 'Login failed. Please try again or register a new account.'
+						});
 					}
 				}
 			});
@@ -72,10 +86,22 @@ app.get('/logout', function(req, res, next) {
 				return next(err);
 			}
 			else {
-				return res.redirect('login.html');
+				return res.redirect('login');
 			}
 		});
 	}
+});
+
+app.get('/viewRegister', function(req, res){
+	res.render('pages/register', {
+	  title: 'Home'
+	});
+});
+
+app.get('/viewLogin', function(req, res){
+	res.render('pages/login', {
+	  title: 'Home'
+	});
 });
 
 app.post('/register', (req, res) => {
@@ -84,14 +110,26 @@ app.post('/register', (req, res) => {
 	var passwordCopy = req.body.passwordCopy;
 
 	if (password != passwordCopy) {
-		res.redirect('register.html');
+		res.render('pages/register', {
+			alert: 'The passwords do not match. Please try again'
+		});
 	}
 	else {
 		let hash = bcrypt.hashSync(password, 10);
 		var sql = 'INSERT INTO user_account (email, password) VALUES($1, $2) RETURNING user_account_id';
 		pool.query(sql, [ email, hash ], function(err, result) {
 			if (err) {
-				console.error('Error registering user', err);
+				if(err.code == 23505) {
+					res.render('pages/register', {
+						alert: 'This email has already been used. Please use another'
+					});
+					
+				}
+				else{
+					res.render('pages/register', {
+						alert: 'Error'
+					});
+				}
 			}
 			else {
 				ssn = req.session;
@@ -114,6 +152,7 @@ app.post('/newNote', (req, res) => {
 	var title = req.body.title;
 	var content = req.body.content;
 	let curr_date = getDateString();
+	console.log("this is the current date: " + curr_date);
 	var user_id = ssn.userId;
 
 	var sql = 'INSERT INTO notes (title, content, date_created, user_account_id) VALUES($1, $2, $3, $4)';
@@ -128,12 +167,29 @@ app.post('/newNote', (req, res) => {
 	});
 });
 
+app.post('/editView', (req, res) => {
+	var myTitle = req.body.title;
+	var myContent = req.body.content;
+	var myNote_id = req.body.note_id;
+	let curr_date = getDateString();
+
+	console.log(myTitle + ' ' + myContent + ' ' + myNote_id + ' ' + curr_date);
+	res.render('pages/edit', {
+		title: myTitle,
+		content: myContent,
+		note_id: myNote_id,
+		curr_date: curr_date
+	});
+})
+
 app.post('/edit', (req, res) => {
 	var title = req.body.title;
 	var content = req.body.content;
 	var note_id = req.body.note_id;
 	let curr_date = getDateString();
 
+
+console.log(title + content + note_id + curr_date);
 	var sql = 'UPDATE notes SET title = $1, content = $2, date_created = $3 WHERE note_id = $4';
 	pool.query(sql, [ title, content, curr_date, note_id ], function(err, result) {
 		if (err) {
@@ -154,12 +210,14 @@ app.post('/deleteNote', (req, res) => {
 		}
 		else {
 			getNotes(ssn.userId, res);
+
 		}
 	});
 });
 
+
 app.get('/', (req, res) => {
-	res.redirect('login.html');
+	res.render('pages/login');
 });
 app.use('/', router);
 
